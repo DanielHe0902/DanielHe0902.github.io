@@ -1,3 +1,4 @@
+import { migrateDemoInfant, INFANT_DEMO_DOB, infantDemoCare } from './infant-demo.js';
 import { emptyProfile } from './seed.js';
 import { installDemoNames } from './recognition-fixture.js';
 import { FAMILY, FUND, PARENT_ACCOUNT, STUDENT_ACCOUNT } from './demo.js';
@@ -15,7 +16,7 @@ export function emptyStudentPlan(personId) { return { personId, school: '', star
 export function runtimeState() {
     const at = runtimeNow();
     const s = { schemaVersion: 3, identityVersion: 1, epoch: crypto.randomUUID(), counter: 0, demoClock: at, actorId: 'father', activeAccountId: PARENT_ACCOUNT, activeFamilyId: FAMILY, persons: {}, accounts: {}, families: { [FAMILY]: { id: FAMILY, name: '林家的家人', currentTripId: null, goal: 25000, archived: false } }, memberships: [], relationships: [], profiles: {}, trips: {}, requests: {}, journeys: { items: {}, selectedId: null, log: [], processed: [] }, plans: { student: emptyStudentPlan('student') }, tasks: {}, ledger: [], stamps: [], consents: [], events: [], invitations: [], messages: {}, mockMode: 'success', adultSharing: { student: false }, funds: {}, supports: {}, milestones: {} };
-    const people = [['father', '林志明', '爸爸', '1963-03-08', 'owner', '父親'], ['mother', '陳慧', '媽媽', '1965-08-09', 'editor', '母親'], ['student', '林晴', '晴晴', '2006-10-01', 'viewer', '女兒'], ['lin-elder', '王秀芳', '外婆', '1950-05-20', 'viewer', '外婆'], ['lin-child', '林小宇', '小宇', '2017-06-12', 'viewer', '弟弟']];
+    const people = [['father', '林志明', '爸爸', '1963-03-08', 'owner', '父親'], ['mother', '陳慧', '媽媽', '1965-08-09', 'editor', '母親'], ['student', '林晴', '晴晴', '2006-10-01', 'viewer', '女兒'], ['lin-elder', '王秀芳', '外婆', '1950-05-20', 'viewer', '外婆'], ['lin-child', '林小宇', '小宇', INFANT_DEMO_DOB, 'viewer', '弟弟']];
     for (const [id, name, nickname, dob, role, label] of people) {
         s.persons[id] = { id, name, displayName: name, nickname, dob, guardianIds: id === 'lin-child' ? ['father', 'mother'] : [] };
         s.accounts['m-' + id] = { id: 'm-' + id, personId: id, joinedAt: at.slice(0, 10), expiry: '2029-01-01', studentVerified: id === 'student' };
@@ -25,7 +26,7 @@ export function runtimeState() {
     for (const id of ['mother', 'lin-elder', 'lin-child'])
         s.consents.push({ id: 'dual-consent-' + id, familyId: FAMILY, personId: id, granteeId: 'father', scopes: ['care:view', 'care:edit', 'service', ...(id === 'lin-child' ? ['passport', 'miles'] : [])], grantedBy: id === 'lin-child' ? 'father' : id, active: true });
     Object.assign(s.profiles[FAMILY + ':lin-elder'], { needs: ['wheelchair', 'adjacent'], required: ['adjacent'], walking: '可短距離步行；機場長距離需輪椅協助', stairs: '可自行登梯', wheelchairType: '機場手動輪椅' });
-    Object.assign(s.profiles[FAMILY + ':lin-child'], { needs: ['childMeal', 'adjacent'], required: ['adjacent'] });
+    Object.assign(s.profiles[FAMILY + ':lin-child'], structuredClone(infantDemoCare));
     s.relationships = [{ familyId: FAMILY, caregiverId: 'father', dependentId: 'lin-elder', required: true }, { familyId: FAMILY, caregiverId: 'mother', dependentId: 'lin-child', required: true }];
     s.dual = { version: 1, generation: 1, accounts: {}, grants: [{ personId: 'student', granteeId: 'father', fundId: FUND, fields: ['beneficiary', 'title', 'route', 'travelWindow', 'target', 'confirmedSupport'], support: true }], tasks: {}, transactions: {}, journal: [], notifications: {}, thanks: {}, studentScene: 'normal', revision: 1 };
     for (const [id, personId, role, amount] of [[PARENT_ACCOUNT, 'father', 'parent', 60000], [STUDENT_ACCOUNT, 'student', 'student', 8000]]) {
@@ -33,7 +34,7 @@ export function runtimeState() {
         s.ledger.push({ id: 'dual-opening:' + personId, key: 'dual-opening:' + personId, memberId: 'm-' + personId, amount, kind: 'opening', at, qualifying: false });
     }
     s.funds[FUND] = { id: FUND, ownerId: 'student', title: '林晴的回家基金', origin: 'LHR', destination: 'HKG', from: '2027-02-01', until: '2027-02-15', target: 20000, token: crypto.randomUUID(), invited: ['father'], status: 'open', inventory: true, landingConsent: false, landed: false, redemption: null, reminders: {} };
-    return clearRetiredTrips(installDemoNames(s));
+    return migrateDemoInfant(clearRetiredTrips(installDemoNames(s)));
 }
 /** Runs transactionally for this one recognized demo space, never iterates other spaces. */
 export function clearRetiredTrips(input) {

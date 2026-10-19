@@ -1,4 +1,5 @@
 import { REQUESTED_TRIP_CLEANUP, needsRequestedCleanup, removeRequestedTrips } from './requested-trip-cleanup.js';
+import { migrateDemoInfant } from './infant-demo.js';
 import { repairTripCare, settleServiceJobs } from './service-flow.js';
 import { migrateServiceCases, repairAirlineMisroutes } from './service-state.js';
 import { deliverFlightChanges, normalizeDisruptionTasks } from './flight-change.js';
@@ -23,6 +24,8 @@ const sessionFields = new Set(['actorId', 'activeAccountId', 'activeFamilyId', '
 const equal = (a, b) => JSON.stringify(a) === JSON.stringify(b);
 function key(x) { return x?.id ?? x?.key ?? (x?.familyId && x?.personId ? x.familyId + ':' + x.personId : JSON.stringify(x)); }
 export function mergeChanges(current, before, after, path = '') {
+    if (!path && current?.infantDemoMigration?.id !== before?.infantDemoMigration?.id)
+        throw Error('家庭資料已更新，請重新整理後再操作。');
     if (!path && (current?.dataContractVersion !== before?.dataContractVersion || current?.tripCleanup?.id !== before?.tripCleanup?.id || current?.tripCleanup?.release !== before?.tripCleanup?.release || current?.journeyRelease?.version !== before?.journeyRelease?.version || current?.seedVersion !== before?.seedVersion || current?.recoverySeedVersion !== before?.recoverySeedVersion))
         throw Error('演示行程已更新，請重新整理後再操作。');
     if (equal(before, after))
@@ -88,7 +91,7 @@ export class DemoStorage {
             result = await this.write(s => { try {
                 if (s && !demoOwned(s))
                     throw Error("此資料空間不屬於已授權的演示帳號，未修改原資料。");
-                return removeRecordingTrip(installBookingPreferences(prepare(updateRuntimeClock(initLearning(migrateText(clearRetiredTrips(s ?? initial)))))));
+                return removeRecordingTrip(migrateDemoInfant(installBookingPreferences(prepare(updateRuntimeClock(initLearning(migrateText(clearRetiredTrips(s ?? initial))))))));
             }
             catch (e) {
                 throw new StartupError('migration', e);
