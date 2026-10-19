@@ -492,7 +492,7 @@ export class GuideAssistant {
         }
     }
     async sendModel(text, r, controller) {
-        if (!this.current.plan && /機票|机票|航班|預訂|预订|飛|飞/.test(text))
+        if (!this.current.plan && B.isFlightPlanningRequest(text))
             this.current.plan = B.newBooking(this.host.state());
         const c = this.current, key = this.key, s = this.host.state(), pendingPlan = c.plan;
         if (pendingPlan) {

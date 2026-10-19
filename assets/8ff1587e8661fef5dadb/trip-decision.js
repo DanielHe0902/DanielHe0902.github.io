@@ -1,0 +1,8 @@
+import { esc } from '/assets/8ff1587e8661fef5dadb/ui.js';
+/** A successful persisted cancellation event is evidence; an airline cancel is not. */
+export function cancellationEvents(s, id) { return Object.values(s.flightChanges?.events ?? {}).filter(e => e.tripId === id && ['plan-cancelled', 'refund-processing'].includes(e.status)); }
+export function userCancelledSegment(s, id, segmentId) { return cancellationEvents(s, id).some(e => e.segmentId === segmentId); }
+export function unresolvedChange(s, id) { return Object.values(s.flightChanges?.events ?? {}).some(e => e.tripId === id && e.status === 'open' && !userCancelledSegment(s, id, e.segmentId)); }
+export function tripDecision(s, id) { const events = cancellationEvents(s, id), j = s.journeys?.items[id], t = s.trips[id]; const count = j?.segments.length ?? t?.route.segments.length ?? 0; const cancelled = new Set(events.map(e => e.segmentId)).size; return { userCancelled: count > 0 && cancelled >= count, partiallyCancelled: cancelled > 0 && cancelled < count, cancelled, events }; }
+export function cancellationRecord(s, id) { const d = tripDecision(s, id); if (!d.cancelled)
+    return ''; return `<section class="panel cancellation-record" data-cancellation-record><h2>${d.userCancelled ? '行程取消' : '部分行程取消'}</h2><p>此段行程已由你取消，紀錄已保留。</p>${d.events.map(e => `<p>${esc(e.before.departureDate)} · ${esc(e.before.origin)} → ${esc(e.before.destination)} · ${esc(e.flight.replace('CX-DEMO', 'CX'))}</p><p>${e.refund ? '退票申請仍在處理，結果另行通知。' : '未付款計劃，沒有退款金額。'}</p>`).join('')}<button class="button secondary" data-view="home">返回首頁</button><button class="text-link" data-new-plan>新增行程</button></section>`; }

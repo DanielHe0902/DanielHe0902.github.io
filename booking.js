@@ -9,6 +9,18 @@ import { EXAMPLE_CATALOG } from '../web/example-flights.js';
 import { aircraftLayout, seatsAdjacent } from './aircraft-care.js';
 import { SERVICE_LABELS } from './config.js';
 import { displayName } from './identity.js';
+import { AIRPORTS } from '../web/travel.js';
+import { sc } from './locale.js';
+/** Route free-form reservation wording through the same context as New itinerary. */
+export function isFlightPlanningRequest(text) {
+    if (/機票|机票|航班|預訂|预订|飛|飞/i.test(text))
+        return true;
+    if (!/預約|预约|預定|预定/.test(text))
+        return false;
+    if (/經濟艙|经济舱|商務艙|商务舱/.test(text))
+        return true;
+    return AIRPORTS.some(a => [a.code, a.city, sc(a.city)].some(place => new RegExp('(?:去|前往|出發到|出发到)\\s*' + place, 'i').test(text)));
+}
 export function installBookingPreferences(s) { if (!s.bookingPreferencesInstalled) {
     s.experience ??= { version: 1, preferences: {}, favorites: {}, plans: {} };
     if (s.dual?.accounts['demo-parent']?.personId === 'father' && !s.experience.preferences['demo-parent'])

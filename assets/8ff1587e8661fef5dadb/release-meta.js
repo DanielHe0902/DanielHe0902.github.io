@@ -1,0 +1,1 @@
+export const RELEASE={"buildVersion":"2.27.1","releaseId":"2.27.1-8ff1587e8661fef5dadb","commitSha":"fd6a487a40da07ba8c7d7d7d32b528c010d64cd6"};
