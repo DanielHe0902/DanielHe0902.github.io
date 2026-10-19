@@ -1,0 +1,253 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   width="50"
+   height="50"
+   viewBox="0 0 13.229167 13.229167"
+   version="1.1"
+   id="svg100"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <defs
+     id="defs97">
+    <radialGradient
+       id="a"
+       cx="250"
+       cy="250"
+       gradientUnits="userSpaceOnUse"
+       r="250"
+       gradientTransform="matrix(0.25,0,0,0.25,0.75,0.75)">
+      <stop
+         offset="0"
+         stop-color="#191987"
+         stop-opacity="0"
+         id="stop794" />
+      <stop
+         offset=".5"
+         stop-color="#191987"
+         stop-opacity=".2"
+         id="stop796" />
+      <stop
+         offset=".8"
+         stop-color="#191987"
+         stop-opacity=".75"
+         id="stop798" />
+      <stop
+         offset="1"
+         stop-color="#191987"
+         id="stop800" />
+    </radialGradient>
+    <radialGradient
+       id="b"
+       cx="250"
+       cy="250"
+       fx="108"
+       fy="60"
+       gradientUnits="userSpaceOnUse"
+       r="300"
+       gradientTransform="matrix(0.25,0,0,0.25,0.75,0.75)">
+      <stop
+         offset="0"
+         stop-color="#fff"
+         stop-opacity=".95"
+         id="stop803" />
+      <stop
+         offset=".25"
+         stop-color="#fff"
+         stop-opacity=".85"
+         id="stop805" />
+      <stop
+         offset=".85"
+         stop-color="#fff"
+         stop-opacity="0"
+         id="stop807" />
+      <stop
+         offset="1"
+         stop-color="#fff"
+         stop-opacity="0"
+         id="stop809" />
+    </radialGradient>
+    <radialGradient
+       id="c"
+       cx="250"
+       cy="250"
+       gradientUnits="userSpaceOnUse"
+       r="249"
+       gradientTransform="matrix(0.25,0,0,0.25,0.75,0.75)">
+      <stop
+         offset="0"
+         stop-color="#534fa3"
+         id="stop812" />
+      <stop
+         offset=".47"
+         stop-color="#191987"
+         stop-opacity=".55"
+         id="stop814" />
+      <stop
+         offset="1"
+         stop-color="#191987"
+         stop-opacity="0"
+         id="stop816" />
+    </radialGradient>
+    <radialGradient
+       id="d"
+       cx="250"
+       cy="250"
+       fx="108"
+       fy="60"
+       gradientUnits="userSpaceOnUse"
+       r="249"
+       gradientTransform="matrix(0.25,0,0,0.25,0.75,0.75)">
+      <stop
+         offset="0"
+         stop-color="#fff"
+         stop-opacity=".7"
+         id="stop819" />
+      <stop
+         offset=".25"
+         stop-color="#fff"
+         stop-opacity=".35"
+         id="stop821" />
+      <stop
+         offset="1"
+         stop-color="#9592c7"
+         stop-opacity="0"
+         id="stop823" />
+    </radialGradient>
+    <radialGradient
+       id="e"
+       cx="250"
+       cy="250"
+       gradientUnits="userSpaceOnUse"
+       r="249"
+       gradientTransform="matrix(0.25,0,0,0.25,0.75,0.75)">
+      <stop
+         offset="0"
+         stop-color="#191987"
+         stop-opacity="0"
+         id="stop826" />
+      <stop
+         offset=".89"
+         stop-color="#191987"
+         stop-opacity="0"
+         id="stop828" />
+      <stop
+         offset=".97"
+         stop-color="#191987"
+         stop-opacity=".07"
+         id="stop830" />
+      <stop
+         offset="1"
+         stop-color="#191987"
+         stop-opacity=".2"
+         id="stop832" />
+    </radialGradient>
+  </defs>
+  <g
+     id="layer1">
+    <g
+       id="g885"
+       transform="matrix(0.10625837,0,0,0.10625837,-0.10625837,-0.10625837)">
+      <circle
+         cx="63.25"
+         cy="63.25"
+         fill="#5752a6"
+         id="circle835"
+         style="stroke-width:0.25"
+         r="62.25" />
+      <circle
+         cx="63.25"
+         cy="63.25"
+         fill="url(#a)"
+         id="circle837"
+         style="fill:url(#a);stroke-width:0.25"
+         r="62.25" />
+      <circle
+         cx="63.25"
+         cy="63.25"
+         fill="url(#b)"
+         id="circle839"
+         style="fill:url(#b);stroke-width:0.25"
+         r="62.25" />
+      <circle
+         cx="63.25"
+         cy="63.25"
+         fill="url(#c)"
+         id="circle841"
+         style="fill:url(#c);stroke-width:0.25"
+         r="62.25" />
+      <circle
+         cx="63.25"
+         cy="63.25"
+         fill="url(#d)"
+         id="circle843"
+         style="fill:url(#d);stroke-width:0.25"
+         r="62.25" />
+      <circle
+         cx="63.25"
+         cy="63.25"
+         fill="url(#e)"
+         id="circle845"
+         style="fill:url(#e);stroke-width:0.25"
+         r="62.25" />
+      <path
+         clip-rule="evenodd"
+         d="m 14.08425,72.140749 c 4.29775,0 7.56225,-2.37325 7.56225,-7.46325 0,-5.03 -3.23625,-7.3985 -7.56225,-7.3985 -3.86275,0 -7.5640001,1.955 -7.5640001,7.3985 0,5.09 3.26425,7.46325 7.5640001,7.46325 m 0,-3.26 c -2.6375,0 -2.92825,-2.60975 -2.92825,-4.199 0,-3.9575 2.09925,-4.15125 2.92825,-4.15125 0.926,0 2.92625,0.19375 2.92625,4.15125 0,1.55925 -0.241,4.199 -2.92625,4.199"
+         fill="#ffffff"
+         fill-rule="evenodd"
+         id="path847"
+         style="stroke-width:0.25" />
+      <path
+         clip-rule="evenodd"
+         d="m 28.10175,57.791749 h -4.145 v 13.82375 H 28.274 v -7.1445 c 0,-0.59875 0.05375,-3.7855 2.894,-3.7855 2.30175,0 2.44175,2.205 2.44175,3.56575 v 7.36425 h 4.313 v -8.682 c 0,-5.142 -2.866,-5.6545 -4.823,-5.6545 -1.9315,0 -3.833,0.65025 -4.99775,2.17475"
+         fill="#ffffff"
+         fill-rule="evenodd"
+         id="path849"
+         style="stroke-width:0.25" />
+      <path
+         clip-rule="evenodd"
+         d="m 50.393999,67.614749 c -0.35325,1.22725 -1.28775,1.42525 -2.487,1.42525 -2.583749,0 -3.078999,-1.994 -3.104749,-3.3245 h 10.397749 l -0.026,-0.7665 c -0.05375,-1.688 -0.41125,-7.66975 -7.13125,-7.66975 -4.515249,0 -7.751499,2.60975 -7.751499,7.3985 0,7.0495 5.60475,7.46325 7.4265,7.46325 2.557999,0 6.093499,-0.60725 7.182999,-4.526 M 44.802,63.398749 c 0.07975,-1.41675 0.74075,-3.24275 3.188749,-3.24275 1.0055,0 2.53875,0.28 2.5925,3.24275 z"
+         fill="#ffffff"
+         fill-rule="evenodd"
+         id="path851"
+         style="stroke-width:0.25" />
+      <polyline
+         clip-rule="evenodd"
+         fill="#ffffff"
+         fill-rule="evenodd"
+         points="260.209 233.833 274.945 283.462 281.422 283.462 298.476 228.167 293.136 228.167 278.08 277.691 263.224 228.167 257.186 228.167 242.337 277.691 227.256 228.167 221.925 228.167 238.987 283.462 245.472 283.462"
+         id="polyline853"
+         transform="matrix(0.25,0,0,0.25,0.75,0.75)" />
+      <path
+         clip-rule="evenodd"
+         d="m 76.798499,64.703499 c 0,4.1085 1.85625,7.46325 6.494,7.46325 4.62525,0 6.4855,-3.35475 6.4855,-7.46325 0,-4.10425 -1.86025,-7.4545 -6.4855,-7.4545 -4.63775,0 -6.494,3.35025 -6.494,7.4545 m 1.27475,0 c 0,-3.91475 1.69675,-6.4985 5.21925,-6.4985 3.51425,0 5.211,2.58375 5.211,6.4985 0,3.91875 -1.69675,6.50275 -5.211,6.50275 -3.5225,0 -5.21925,-2.584 -5.21925,-6.50275"
+         fill="#ffffff"
+         fill-rule="evenodd"
+         id="path855"
+         style="stroke-width:0.25" />
+      <path
+         clip-rule="evenodd"
+         d="m 99.329499,57.524749 h -0.6415 c -2.3125,0 -4.06925,1.4125 -4.74125,3.1265 h -0.05175 v -2.8595 h -1.2315 v 13.82375 h 1.2315 v -6.6105 c 0,-5.607 3.00575,-6.20125 4.823,-6.25725 h 0.6115"
+         fill="#ffffff"
+         fill-rule="evenodd"
+         id="path857"
+         style="stroke-width:0.25" />
+      <rect
+         fill="#ffffff"
+         height="19.043249"
+         width="1.19275"
+         x="101.599"
+         y="52.57225"
+         id="rect859"
+         style="stroke-width:0.25" />
+      <path
+         clip-rule="evenodd"
+         d="m 116.78775,52.572249 v 7.5365 c -0.90425,-1.85175 -2.825,-2.8595 -4.97825,-2.8595 -3.28125,0 -6.10625,2.09725 -6.10625,7.265 0,1.52475 0.254,7.65275 6.162,7.65275 3.5615,0 4.63825,-2.20925 4.862,-2.7565 h 0.0602 v 2.20525 h 1.24025 v -19.04325 m -11.0237,11.91575 c 0,-2.93725 1.184,-6.28325 4.74525,-6.28325 3.1955,0 5.09475,2.558 5.09475,6.5845 0,4.67675 -2.60125,6.41675 -5.0345,6.41675 -1.07225,0 -4.8055,-0.27125 -4.8055,-6.718"
+         fill="#ffffff"
+         fill-rule="evenodd"
+         id="path861"
+         style="stroke-width:0.25" />
+    </g>
+  </g>
+</svg>
