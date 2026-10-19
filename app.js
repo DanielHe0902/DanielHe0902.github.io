@@ -5,6 +5,7 @@ import { planCarePreview } from './plan-care.js';
 import { flightChangeController } from './flight-change-ui.js';
 import { calendarController } from './calendar-ui.js';
 import { validateCalendarPlan, calendarPatch } from './calendar-import.js';
+import { clearStudentCalendar, withoutCalendar, calendarClearRevision } from './student-calendar.js';
 import { confirmCalendar } from './learning.js';
 import { schoolLabel } from './product-copy.js';
 import { passportPage, stampViews, stampDetail } from './passport.js';
@@ -111,7 +112,14 @@ function toast(text) { const box = get('#toast'); box.textContent = tc(text); bo
 function saveSession() { if (!state.activeAccountId)
     return; accountSessions[state.activeAccountId] = { familyId: state.activeFamilyId, tripId: state.selectedTripId, view, panel: D.clone(presentation) }; sessionStorage.setItem('cx2-active-account:' + space, state.activeAccountId); sessionStorage.setItem(accountSessionKey, JSON.stringify(accountSessions)); }
 function persist() { saveSession(); const before = persistedSnapshot, after = D.clone(state); persistedSnapshot = after; void storage.saveDelta(before, after).catch(e => toast('保存失败：' + e.message)); }
-async function refreshBusiness(redraw = true) { const shared = await storage.read(); const current = { familyId: state.activeFamilyId, tripId: state.selectedTripId }, id = state.activeAccountId; state = M.activateAccount(M.syncFamilyJourney(shared), id, current); state.demoSpaceId = space; persistedSnapshot = D.clone(state); guide.sync(); if (redraw)
+async function refreshBusiness(redraw = true) { const revision = calendarClearRevision(state); const shared = await storage.read(); const current = { familyId: state.activeFamilyId, tripId: state.selectedTripId }, id = state.activeAccountId; state = M.activateAccount(M.syncFamilyJourney(shared), id, current); state.demoSpaceId = space; persistedSnapshot = D.clone(state); if (calendarClearRevision(state) !== revision) {
+    calendarImport.cancel(true);
+    if (ui.planDraft)
+        ui.planDraft = withoutCalendar(ui.planDraft);
+    ui.calendarMonth = undefined;
+    guide.contextChanged();
+    saveReleaseDraft();
+} guide.sync(); if (redraw)
     render(); }
 function switchAccount(accountId) { transition(() => { calendarImport.cancel(true); flightChanges.reset(); services.reset(); close(); saveSession(); guide.contextChanged(); state = M.activateAccount(state, accountId, accountSessions[accountId]); state.demoSpaceId = space; persistedSnapshot = D.clone(state); ui = { careDraft: null, planDraft: null, passportId: null, passportPage: 0, rewardPerson: null }; homePreference = M.studentAccount(state) ? 'student' : 'family'; guide.contextChanged(); const saved = accountSessions[accountId]; setRoute(saved?.view ?? 'home'); if (saved?.panel) {
     presentation = D.clone(saved.panel);
@@ -805,7 +813,27 @@ const actions = {
     'select-fare': () => { guide.beginStudentPlan(); render(); },
     'open-account': () => { document.querySelector('.account-menu').open = true; get('#account-switch')?.focus(); },
     'basic-search': () => modal('一般航班試算', '<p>所有身份均可使用一般航線試算；不讀取學生校曆或私人計劃。</p><label class="field"><span>起點</span><select id="search-origin">' + AIRPORTS.map(a => '<option value="' + a.code + '">' + a.code + ' · ' + a.city + '</option>').join('') + '</select></label><label class="field"><span>終點</span><select id="search-destination">' + AIRPORTS.map(a => '<option value="' + a.code + '" ' + (a.code === 'LHR' ? 'selected' : '') + '>' + a.code + ' · ' + a.city + '</option>').join('') + '</select></label><div id="search-result" aria-live="polite"></div>', [{ label: '試算航班', run: () => { const r = buildItinerary({ origin: get('#search-origin').value, destination: get('#search-destination').value, date: '2027-01-08', budget: 30000 }); get('#search-result').textContent = r.origin + ' → ' + r.destination + ' · ' + money(r.adultFare) + '（參考票價）'; } }]),
-    'save-plan': () => { const form = get('#student-form'), p = form ? readPlan(form) : D.clone(ui.planDraft ?? state.plans[state.actorId]); validateCalendarPlan(p); modal('核對並保存校曆', '<p>' + esc(p.school) + ' · ' + esc(p.start) + ' 開學</p><p>請確認所有日期來自你已核對的校曆。保存後可自行領取校曆任務獎勵；不會自動入帳或建立行程。</p>', [{ label: '已核對，保存校曆', run: async () => { const accountId = state.activeAccountId, context = { familyId: state.activeFamilyId, tripId: state.selectedTripId }; await storage.write(current => { let s = M.activateAccount(current, accountId, context); s = D.reduce(s, { type: 'plan', plan: { ...p, calendarConfirmed: true } }); s = D.reduce(s, { type: 'savePlan', personId: s.actorId }); s.plans[s.actorId].calendarConfirmed = true; confirmCalendar(s, s.plans[s.actorId]); return s; }); ui.planDraft = null; dirty = false; close(); await refreshBusiness(); guide.resumeStudentIntent(); render(); toast('校曆已保存。獎勵可在任務區自行領取。'); } }]); },
+    'clear-calendar': () => {
+        const accountId = state.activeAccountId, personId = state.actorId, epoch = state.epoch, revision = calendarClearRevision(state), context = { familyId: state.activeFamilyId, tripId: state.selectedTripId };
+        modal('清除目前校曆', '<p>清除 ' + personName(personId) + ' 的學校名稱、校曆日期及已導入記錄，之後可重新上傳。</p><p>已有行程、出發日期、航線、預算、行李、簽證及已獲里數會保留。</p>', [{ label: '確認清除校曆', style: 'danger', run: async () => {
+                    if (state.activeAccountId !== accountId || state.actorId !== personId || state.epoch !== epoch)
+                        throw Error('帳號已切換，請重新核對。');
+                    await storage.write(current => { if (current.epoch !== epoch || calendarClearRevision(current, personId) !== revision)
+                        throw Error('校曆資料已更新，請重新核對。'); return clearStudentCalendar(M.activateAccount(current, accountId, context), personId); });
+                    calendarImport.cancel(true);
+                    if (ui.planDraft)
+                        ui.planDraft = withoutCalendar(ui.planDraft);
+                    ui.calendarMonth = undefined;
+                    dirty = !!ui.planDraft || !!ui.careDraft || !!intakeText.trim();
+                    close();
+                    await refreshBusiness();
+                    saveReleaseDraft();
+                    toast('校曆已清除，可以重新上傳。');
+                } }]);
+    },
+    'save-plan': () => { const form = get('#student-form'), p = form ? readPlan(form) : D.clone(ui.planDraft ?? state.plans[state.actorId]); validateCalendarPlan(p); const boundAccount = state.activeAccountId, boundActor = state.actorId, boundEpoch = state.epoch, boundRevision = calendarClearRevision(state); modal('核對並保存校曆', '<p>' + esc(p.school) + ' · ' + esc(p.start) + ' 開學</p><p>請確認所有日期來自你已核對的校曆。保存後可自行領取校曆任務獎勵；不會自動入帳或建立行程。</p>', [{ label: '已核對，保存校曆', run: async () => { if (state.activeAccountId !== boundAccount || state.actorId !== boundActor || state.epoch !== boundEpoch)
+                throw Error('帳號已切換，請重新核對。'); const accountId = state.activeAccountId, context = { familyId: state.activeFamilyId, tripId: state.selectedTripId }; await storage.write(current => { if (current.epoch !== boundEpoch || calendarClearRevision(current, boundActor) !== boundRevision)
+                throw Error('校曆已清除，請重新核對後再保存。'); let s = M.activateAccount(current, accountId, context); s = D.reduce(s, { type: 'plan', plan: { ...p, calendarConfirmed: true } }); s = D.reduce(s, { type: 'savePlan', personId: s.actorId }); s.plans[s.actorId].calendarConfirmed = true; confirmCalendar(s, s.plans[s.actorId]); return s; }); ui.planDraft = null; dirty = false; close(); await refreshBusiness(); guide.resumeStudentIntent(); render(); toast('校曆已保存。獎勵可在任務區自行領取。'); } }]); },
     'subscribe': () => registration(() => { act({ type: 'subscribe', personId: state.actorId }); toast('已儲存訂閱。'); }),
     'share-plan': () => registration(() => modal('邀请家人协助这份计划', '<label class="field"><span>选择有权限的家庭</span><select id="share-family">' + D.familiesFor(state).map(f => '<option value="' + f.id + '">' + esc(f.name) + '</option>').join('') + '</select></label><label class="field"><span>允许共享的范围</span><select id="share-scope"><option value="dates">仅出发与开学日期</option><option value="summary">目标路线与上述日期</option></select></label><p class="meta">不共享签证、住宿资料或其他家庭记录。</p>', [{ label: '确认共享范围', run: () => { act({ type: 'sharePlan', personId: state.actorId, familyId: get('#share-family').value, scope: get('#share-scope').value }); close(); } }])),
     'complete-learn': () => registration(() => { act({ type: 'completeTask', personId: state.actorId, taskId: 'calendar-learn', familyId: null }); toast('已完成，可领取 100 里獎勵。'); }),
@@ -898,7 +926,7 @@ document.addEventListener('click', e => {
         if (a.getAttribute('type') === 'submit')
             return;
         safe(() => { const fn = actions[a.dataset.action]; if (fn) {
-            if (['save-plan', 'calendar-preview', 'select-fare', 'align-dorm', 'confirm-accommodation', 'complete-learn', 'subscribe', 'share-plan'].includes(a.dataset.action) && !canPlan(state))
+            if (['clear-calendar', 'save-plan', 'calendar-preview', 'select-fare', 'align-dorm', 'confirm-accommodation', 'complete-learn', 'subscribe', 'share-plan'].includes(a.dataset.action) && !canPlan(state))
                 throw Error(message('STUDENT_ACCESS_REQUIRED'));
             fn(a);
         }
@@ -947,7 +975,7 @@ void checkDisruption();
 new MutationObserver(() => flightChanges.bind()).observe(dialog, { childList: true, subtree: true });
 function retainedDraftPanel() { return sessionStorage.getItem(draftKey() + ':retained') ? '<section class="notice"><p>此帳號有舊版本草稿，尚未套用至目前行程。</p><button class="button secondary" data-retained-draft>查看保留草稿</button></section>' : ''; }
 const draftKey = () => 'cx2-safe-draft:' + space + ':' + state.activeAccountId + ':' + state.tripCleanup?.id;
-function saveReleaseDraft() { const data = { tripRelease: state.tripCleanup?.release, accountId: state.activeAccountId, seedVersion: state.seedVersion, familyId: state.activeFamilyId, tripId: state.selectedTripId, view, presentation, ui: { careDraft: ui.careDraft, planDraft: ui.planDraft, assistantCare: ui.assistantCare }, intakeText }; if (dirty || ui.careDraft || ui.planDraft || intakeText.trim())
+function saveReleaseDraft() { const data = { calendarClearRevision: calendarClearRevision(state), tripRelease: state.tripCleanup?.release, accountId: state.activeAccountId, seedVersion: state.seedVersion, familyId: state.activeFamilyId, tripId: state.selectedTripId, view, presentation, ui: { careDraft: ui.careDraft, planDraft: ui.planDraft, assistantCare: ui.assistantCare }, intakeText }; if (dirty || ui.careDraft || ui.planDraft || intakeText.trim())
     sessionStorage.setItem(draftKey(), JSON.stringify(data));
 else {
     const old = JSON.parse(sessionStorage.getItem(draftKey()) ?? 'null');
@@ -957,6 +985,8 @@ else {
 readLocation();
 try {
     const saved = JSON.parse(sessionStorage.getItem(draftKey()) ?? 'null');
+    if (saved?.ui?.planDraft && (saved.calendarClearRevision ?? 0) !== calendarClearRevision(state))
+        saved.ui.planDraft = withoutCalendar(saved.ui.planDraft);
     if (saved?.tripRelease === state.tripCleanup?.release && saved?.accountId === state.activeAccountId && saved.familyId === state.activeFamilyId && saved.tripId === state.selectedTripId && saved.seedVersion === state.seedVersion) {
         ui = { ...ui, ...saved.ui };
         intakeText = saved.intakeText ?? '';

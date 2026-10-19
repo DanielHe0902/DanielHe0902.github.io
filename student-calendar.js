@@ -3,6 +3,40 @@ import { validateCalendarPlan } from './calendar-import.js';
 import * as F from './flights.js';
 import { airport } from '../web/travel.js';
 import { addDays, localParts, localDeparture } from './flight-time.js';
+export function calendarClearRevision(s, personId = s.actorId) { return s.calendars?.clearRevisions?.[personId] ?? 0; }
+/** Calendar-only reset: travel preferences, existing journeys and earned history survive. */
+export function withoutCalendar(p) {
+    const next = structuredClone(p);
+    for (const key of ['school', 'start', 'exam', 'holiday', 'holidayEnd', 'graduation', 'dorm'])
+        next[key] = '';
+    delete next.calendarImport;
+    next.calendarConfirmed = false;
+    next.saved = false;
+    next.selected = null;
+    next.subscribed = false;
+    next.sharedWith = null;
+    return next;
+}
+export function clearStudentCalendar(s, personId = s.actorId) {
+    requireStudent(s, personId);
+    const memberId = s.dual?.accounts[s.activeAccountId]?.memberId ?? Object.values(s.accounts).find(a => a.personId === personId)?.id;
+    if (!memberId || !s.plans[personId])
+        throw Error('找不到目前學生的校曆資料。');
+    s.plans[personId] = withoutCalendar(s.plans[personId]);
+    const store = s.calendars ??= { selected: {}, versions: {} };
+    delete store.selected[memberId];
+    for (const [id, rows] of Object.entries(store.versions)) {
+        const retained = rows.filter(r => r.ownerMemberId !== memberId || r.ownerPersonId !== personId);
+        if (retained.length === rows.length)
+            continue;
+        if (retained.length)
+            store.versions[id] = retained;
+        else
+            delete store.versions[id];
+    }
+    (store.clearRevisions ??= {})[personId] = calendarClearRevision(s, personId) + 1;
+    return s;
+}
 export function calendarTermKey(p) { return [p.school.trim().toLowerCase(), p.start].map(encodeURIComponent).join(':'); }
 export function saveCalendarVersion(s, p) { requireStudent(s, p.personId); validateCalendarPlan(p); if (!p.saved || !p.calendarConfirmed)
     throw Error('請先核對並保存校曆。'); const a = s.dual.accounts[s.activeAccountId], term = calendarTermKey(p), id = 'calendar:' + a.memberId + ':' + term; const store = s.calendars ??= { selected: {}, versions: {} }; const versions = store.versions[id] ??= []; const fingerprint = (x) => JSON.stringify({ ...x, selected: null, checks: {}, subscribed: false }); let row = versions.at(-1); if (!row || fingerprint(row.plan) !== fingerprint(p)) {

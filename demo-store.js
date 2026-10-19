@@ -24,6 +24,10 @@ const sessionFields = new Set(['actorId', 'activeAccountId', 'activeFamilyId', '
 const equal = (a, b) => JSON.stringify(a) === JSON.stringify(b);
 function key(x) { return x?.id ?? x?.key ?? (x?.familyId && x?.personId ? x.familyId + ':' + x.personId : JSON.stringify(x)); }
 export function mergeChanges(current, before, after, path = '') {
+    if (!path)
+        for (const id of Object.keys(after?.plans ?? {}))
+            if ((current?.calendars?.clearRevisions?.[id] ?? 0) !== (before?.calendars?.clearRevisions?.[id] ?? 0) && !equal(before?.plans?.[id], after.plans[id]))
+                throw Error('校曆已在另一頁清除，請重新整理後再操作。');
     if (!path && current?.infantDemoMigration?.id !== before?.infantDemoMigration?.id)
         throw Error('家庭資料已更新，請重新整理後再操作。');
     if (!path && (current?.dataContractVersion !== before?.dataContractVersion || current?.tripCleanup?.id !== before?.tripCleanup?.id || current?.tripCleanup?.release !== before?.tripCleanup?.release || current?.journeyRelease?.version !== before?.journeyRelease?.version || current?.seedVersion !== before?.seedVersion || current?.recoverySeedVersion !== before?.recoverySeedVersion))
