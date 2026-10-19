@@ -1,9 +1,7 @@
-# Cathay Connects team demo entry
+# Cathay Connects public demo
 
-Entry: https://danielhe0902.github.io/
+https://danielhe0902.github.io/
 
-This public GitHub Pages repository contains only a static redirect and a fallback link to https://cx2-demo.v1r9o.chatgpt.site/.
+This repository contains only the compiled public web application. No GitHub sign-in is required. The source repository remains private. AI and calendar requests use the existing server; secrets remain server-side. Demo records stay in each browser and do not sync between visitors or domains.
 
-The demo remains hosted at its existing address. GitHub sign-in and server-side verification of read access to `DanielHe0902/CX` protect the demo. This entry does not authenticate users, host the demo, forward query parameters, or store user data. The CX source repository remains private.
-
-GitHub Pages publishes the root of the `main` branch. Keep the redirect target fixed and retain the no-referrer policy. Never add demo source files, user records, credentials, or tokens to this repository. Search-indexing directives reduce discovery; they are not access controls.
+Generated from source commit bbffde33f6a7a5e3056ea12398d32ce870f25998. Do not add credentials, server source, local storage exports, or runtime configuration here.

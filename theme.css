@@ -1,0 +1,88 @@
+/* Cathay Connects project tokens, informed by the supplied Cathay reference.
+   These are project choices, not official Cathay VI measurements. */
+:root {
+  --action-primary: #2b4037;
+  --action-primary-hover: #20332b;
+  --brand-link: #286f70;
+  --surface-base: #ffffff;
+  --surface-muted: #f2f6f4;
+  --surface-warm: #faf9f6;
+  --border-default: #dee4e1;
+  --border-control: #7b8e84;
+  --text-primary: #333b38;
+  --text-secondary: #5c6962;
+  --text-muted: #64706a;
+  --status-success: #237653;
+  --status-warning: #875514;
+  --status-danger: #a02525;
+  --status-info: #315e79;
+  --radius-control: 5px;
+  --radius-card: 8px;
+  --radius-panel: 8px;
+  --content-width: 1240px;
+  --control-height: 46px;
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-6: 24px;
+  --space-8: 32px;
+  --space-10: 40px;
+  --motion: 160ms;
+  --shadow-popover: 0 8px 30px #20332b1a;
+  --font-ui: 'PingFang HK', 'PingFang TC', 'Microsoft JhengHei', 'Noto Sans TC', system-ui, sans-serif;
+  --font-sans: var(--font-ui);
+  /* Compatibility aliases keep existing business states on the same palette. */
+  --brand-primary: var(--action-primary);
+  --brand-primary-hover: var(--action-primary-hover);
+  --brand-deep: var(--action-primary-hover);
+  --brand-tint: var(--surface-muted);
+  --canvas: var(--surface-base);
+  --surface: var(--surface-base);
+  --surface-subtle: var(--surface-muted);
+  --border-subtle: var(--border-default);
+  --accent-warm: #927747;
+  --sidebar: 0px;
+  --ux-ink: var(--text-primary);
+  --ux-muted: var(--text-secondary);
+  --ux-line: var(--border-default);
+  --ux-focus: var(--brand-link);
+  --ux-wash: var(--surface-muted);
+}
+
+/* Shared care task: one consent, independent request outcomes. */
+.service-assistant-task { padding:24px 0; max-width:1100px; }
+.readable-trip { padding:20px 0; border-bottom:1px solid var(--line,#dce4e1); }
+.readable-trip strong { font-size:1.25rem; }
+.readable-trip p { margin:8px 0 0; }
+.service-task-list article { display:grid; grid-template-columns:minmax(0,1fr) minmax(180px,.65fr); gap:24px; padding:24px 0; border-bottom:1px solid var(--line,#dce4e1); }
+.service-task-list p { margin:8px 0; }
+.service-batch-consent { padding-top:24px; max-width:75ch; }
+.service-edit-form { display:grid; grid-template-columns:1fr 1fr; gap:16px; padding:24px 0; }
+.service-edit-form h3,.service-edit-form>p { grid-column:1/-1; }
+.booking-imported-care { border-top:1px solid #dce4e1; padding:24px 0; }
+.request-history time { font-variant-numeric:tabular-nums; color:#576761; }
+dialog .flight-change-popup { position:static; width:auto; max-width:none; margin:0 0 24px; box-shadow:none; }
+@media(max-width:600px){.service-task-list article,.service-edit-form{grid-template-columns:1fr}.service-assistant-task{padding:16px 0}.service-task-list article{gap:12px}.service-batch-consent .button{width:100%}.readable-trip{overflow-wrap:anywhere}}
+
+.full-assistant:has(.service-assistant-task) .assistant-footer{position:static}
+.full-assistant:has(.service-assistant-task) .assistant-message,.full-assistant:has(.service-assistant-task) .assistant-jumps{display:none}
+.full-assistant:has(.service-assistant-task) textarea{min-height:44px;height:44px}
+.service-task-list article{padding:16px 0}
+.service-edit-form fieldset,.service-edit-form .service-editor-heading{grid-column:1/-1}
+
+.task-center { container: task-center / inline-size; }
+.task-boards,.school-strategy-grid { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:40px; }
+.task-board { min-width:0; }
+.task-board > p { color:var(--text-secondary); min-height:3rem; }
+.task-board-row,.task-board .home-reward-row { padding:24px 0; border-top:1px solid var(--border-default); }
+.task-board-row h3,.task-board .home-reward-row h3 { font-size:1.125rem; line-height:1.5; margin:0 0 8px; }
+.task-board-row p { margin:8px 0; }
+.task-board-action { display:flex; gap:12px; justify-content:space-between; align-items:center; flex-wrap:wrap; }
+.school-strategies { padding:24px 0; }
+.school-strategy-grid { gap:24px; margin-top:24px; }
+.school-strategy-grid article { border-top:1px solid var(--border-default); padding:20px 0; min-width:0; }
+.plan-care-person { margin:24px 0; border:1px solid var(--border-default); border-radius:var(--radius-control); padding:16px 20px; }
+.plan-care-person legend { padding:0 8px; font-weight:600; }
+@container task-center (max-width:48rem) { .task-boards { grid-template-columns:1fr; gap:32px; } }
+@media(max-width:720px) { .school-strategy-grid { grid-template-columns:1fr; } }
